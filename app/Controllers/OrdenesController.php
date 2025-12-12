@@ -83,12 +83,25 @@ class OrdenesController extends Controller
         redirect('/ordenes');
     }
 
-    public function delete(int $id): void
-    {
-        Orden::delete($id);
-        flash_set('success', 'Orden eliminada.');
+  public function delete(int $id): void
+{
+    // 🔎 Verificar si la orden tiene repuestos asignados
+    $detalles = OrdenRepuesto::byOrden($id);
+
+    if (!empty($detalles)) {
+        flash_set(
+            'error',
+            'No se puede eliminar la orden porque tiene repuestos asignados. Primero quítalos.'
+        );
         redirect('/ordenes');
     }
+
+    // ✅ Si no tiene repuestos, se elimina sin problema
+    Orden::delete($id);
+    flash_set('success', 'Orden eliminada correctamente.');
+    redirect('/ordenes');
+}
+
 
     /* =========================
        DETALLE + REPUESTOS
