@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Órdenes | RevTech{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <p class="text-uppercase text-secondary small mb-1">Operación</p>
+    <h2 class="h3 fw-bold">Órdenes de trabajo</h2>
+  </div>
+  <a class="btn btn-primary" href="/api/ordenes/">API /api/ordenes/</a>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Estados</h5>
+        <p class="text-secondary small">recibido → en_proceso → listo → entregado</p>
+        <span class="badge bg-warning text-dark">Solo admin avanza estado</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Protección</h5>
+        <p class="text-secondary small">Permiso `IsAuthenticated` en viewset.</p>
+        <span class="badge bg-info text-dark">Token requerido</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Validaciones</h5>
+        <p class="text-secondary small">`validate_descripcion` exige 10+ caracteres.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Vehículos | RevTech{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <div>
+    <p class="text-uppercase text-secondary small mb-1">Flota</p>
+    <h2 class="h3 fw-bold">Vehículos y órdenes</h2>
+  </div>
+  <a class="btn btn-primary" href="/api/vehiculos/">API /api/vehiculos/</a>
+</div>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Alta de vehículo</h5>
+        <p class="text-secondary small">Valida placa (mín 5 chars, upper).</p>
+        <span class="badge bg-info text-dark">Serializer validate_placa</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Relación con cliente</h5>
+        <p class="text-secondary small">FK a Cliente, `related_name=vehiculos`.</p>
+        <span class="badge bg-light">GET /api/vehiculos/</span>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">Órdenes de trabajo</h5>
+        <p class="text-secondary small">Flujo de estados controlado y protegido.</p>
+        <span class="badge bg-success">POST /api/ordenes/&lt;id&gt;/avanzar_estado/</span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
