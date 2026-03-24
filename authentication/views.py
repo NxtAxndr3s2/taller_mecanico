@@ -47,7 +47,13 @@ def registro(request):
     )
 
     return Response(
-        {'token': token.key, 'username': user.username, 'email': user.email},
+        {
+            'token': token.key,
+            'user_id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'is_admin': user.is_staff,
+        },
         status=status.HTTP_201_CREATED
     )
 
@@ -83,6 +89,7 @@ def login(request):
 
     return Response({
         'token': token.key,
+        'user_id': user.id,
         'username': user.username,
         'email': user.email,
         'is_admin': user.is_staff,

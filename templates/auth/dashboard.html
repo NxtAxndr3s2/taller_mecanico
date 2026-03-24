@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevTech — Panel del Cliente</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Archivo:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#050505',
+                        'panel-bg': '#0f0f0f',
+                        'accent-blue': '#3b82f6',
+                        'border-white': 'rgba(255,255,255,0.06)'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'display': ['Archivo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel { background: rgba(15,15,15,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05);}
+        .status-badge { background: rgba(59,130,246,0.1); color:#3b82f6; border:1px solid rgba(59,130,246,0.2);}
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-dark-bg text-gray-300 font-sans antialiased flex h-screen overflow-hidden" id="app">
+<aside class="w-64 border-r border-border-white flex flex-col bg-black">
+    <div class="p-8">
+        <div class="font-display text-xl font-black text-white italic tracking-tighter uppercase">
+            REV<span class="text-accent-blue">TECH</span>
+        </div>
+    </div>
+    <nav class="flex-1 px-4 space-y-2">
+        <a class="flex items-center gap-3 px-4 py-3 bg-accent-blue/10 text-white rounded-lg border border-accent-blue/20">
+            <i class="bi bi-speedometer2 text-accent-blue"></i> <span class="text-sm font-semibold uppercase italic tracking-wider">Dashboard</span>
+        </a>
+        <span class="flex items-center gap-3 px-4 py-3 text-gray-500 text-sm uppercase tracking-wider italic"><i class="bi bi-car-front"></i>Mis Vehículos</span>
+        <span class="flex items-center gap-3 px-4 py-3 text-gray-500 text-sm uppercase tracking-wider italic"><i class="bi bi-calendar-check"></i>Citas</span>
+        <span class="flex items-center gap-3 px-4 py-3 text-gray-500 text-sm uppercase tracking-wider italic"><i class="bi bi-file-earmark-text"></i>Facturas</span>
+    </nav>
+    <div class="p-6 border-t border-border-white">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-accent-blue to-blue-900 flex items-center justify-center text-white font-bold" id="avatar">--</div>
+            <div>
+                <p class="text-xs font-bold text-white uppercase italic" id="user-name">Cliente</p>
+                <p class="text-[10px] text-gray-500 uppercase tracking-tighter" id="user-email"></p>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<main class="flex-1 overflow-y-auto bg-dark-bg p-8">
+    <header class="flex justify-between items-end mb-12">
+        <div>
+            <h1 class="font-display text-4xl text-white font-black italic uppercase tracking-tighter leading-none">Bienvenido, <span class="text-accent-blue" id="headline-name">Cliente</span></h1>
+            <p class="text-gray-500 text-xs mt-2 uppercase tracking-[0.2em] font-bold" id="fecha-hoy"></p>
+        </div>
+        <div class="flex gap-4">
+            <button id="btn-logout" class="bg-white text-black px-6 py-2 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-accent-blue hover:text-white transition-all italic">Cerrar sesión</button>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-12 gap-6">
+        <div class="col-span-12 lg:col-span-8 glass-panel rounded-xl p-8 relative overflow-hidden">
+            <div class="relative z-10">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="status-badge px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest mb-4 inline-block italic" id="vehiculo-estado">Sin datos</span>
+                        <h2 class="text-3xl font-display text-white font-black italic uppercase" id="vehiculo-titulo">Espera a que el administrador ponga el nombre y la imagen de tu vehículo</h2>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest" id="vehiculo-placa"></p>
+                    </div>
+                    <div class="text-right" id="progreso-box" hidden>
+                        <p class="text-4xl font-display text-white font-black italic uppercase tracking-tighter" id="progreso-text">--</p>
+                        <p class="text-[9px] text-accent-blue font-bold uppercase tracking-widest">Progreso estimado</p>
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-center">
+                    <img id="vehiculo-img" src="https://placehold.co/600x300?text=Sin+imagen" class="w-full max-w-lg object-contain mix-blend-lighten opacity-80" alt="Vehículo">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 lg:col-span-4 space-y-6">
+            <div class="glass-panel rounded-xl p-6">
+                <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] mb-4 italic"><i class="bi bi-info-circle text-accent-blue mr-2"></i>Próxima orden</h3>
+                <div id="proxima-orden" class="text-sm text-gray-400 italic">Sin órdenes asignadas.</div>
+            </div>
+            <div class="glass-panel rounded-xl p-6">
+                <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] mb-4 italic"><i class="bi bi-list-check text-accent-blue mr-2"></i>Mis órdenes</h3>
+                <div id="lista-ordenes" class="space-y-3 text-sm text-gray-300"></div>
+            </div>
+        </div>
+
+        <div class="col-span-12 glass-panel rounded-xl overflow-hidden">
+            <div class="p-6 border-b border-border-white flex justify-between items-center">
+                <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] italic">Historial de servicios</h3>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-black/50 text-[10px] uppercase font-bold text-gray-500 tracking-widest">
+                    <tr>
+                        <th class="p-4 italic">Fecha ingreso</th>
+                        <th class="p-4 italic">Descripción</th>
+                        <th class="p-4 italic">Estado</th>
+                        <th class="p-4 italic">Entrega</th>
+                        <th class="p-4 italic">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-ordenes" class="text-xs"></tbody>
+            </table>
+        </div>
+    </div>
+</main>
+
+<script>
+const token = localStorage.getItem('token');
+const username = localStorage.getItem('username');
+const userId = localStorage.getItem('user_id');
+const isAdmin = localStorage.getItem('is_admin') === '1';
+if(!token){ window.location.href = '/portal/'; }
+if(isAdmin){ window.location.href = '/admin/'; }
+
+const headers = { 'Authorization': 'Token ' + token, 'Content-Type': 'application/json' };
+const fechaHoy = new Date().toLocaleDateString('es-CO', { day:'2-digit', month:'long', year:'numeric' });
+document.getElementById('fecha-hoy').textContent = `Resumen — ${fechaHoy}`;
+document.getElementById('headline-name').textContent = username || 'Cliente';
+document.getElementById('user-name').textContent = username || 'Cliente';
+document.getElementById('user-email').textContent = localStorage.getItem('email') || '';
+document.getElementById('avatar').textContent = (username||'--').slice(0,2).toUpperCase();
+
+async function fetchJSON(url){
+  const res = await fetch(url,{headers});
+  if(res.status === 401 || res.status === 403){
+    limpiarSesion();
+    window.location.href = '/portal/';
+    return null;
+  }
+  if(!res.ok){
+    const text = await res.text();
+    const err = text || `HTTP ${res.status}`;
+    throw new Error(err);
+  }
+  return res.json();
+}
+
+async function cargarDashboard(){
+  try{
+    const clientes = await fetchJSON('/api/clientes/');
+    if(!clientes) return;
+    const miCliente = clientes.find(c => String(c.user) === String(userId));
+    if(!miCliente){ document.getElementById('vehiculo-titulo').textContent = 'No tienes cliente asignado'; return; }
+
+    const vehiculos = await fetchJSON('/api/vehiculos/');
+    if(!vehiculos) return;
+    const misVehiculos = vehiculos.filter(v => String(v.cliente) === String(miCliente.id));
+    const vehiculo = misVehiculos[0];
+    if(vehiculo){
+      const nombre = [vehiculo.marca, vehiculo.modelo].filter(Boolean).join(' ');
+      const tieneNombre = Boolean(nombre.trim());
+      document.getElementById('vehiculo-titulo').textContent = tieneNombre ? nombre : 'Espera a que el administrador ponga el nombre y la imagen de tu vehículo';
+      document.getElementById('vehiculo-placa').textContent = vehiculo.placa ? `Placa: ${vehiculo.placa}` : '';
+      document.getElementById('vehiculo-img').src = vehiculo.foto || 'https://placehold.co/600x300?text=Sin+imagen';
+      document.getElementById('vehiculo-estado').textContent = 'Asignado';
+    } else {
+      document.getElementById('vehiculo-titulo').textContent = 'Espera a que el administrador cree tu vehículo';
+      document.getElementById('vehiculo-estado').textContent = 'Pendiente';
+    }
+
+    const ordenes = await fetchJSON('/api/ordenes/');
+    if(!ordenes) return;
+    const misOrdenes = ordenes.filter(o => misVehiculos.some(v => v.id === o.vehiculo));
+    renderOrdenes(misOrdenes);
+  }catch(err){
+    console.error('Dashboard error:', err);
+    document.getElementById('vehiculo-titulo').textContent = 'No se pudo cargar el panel. Verifica tu sesión o recarga.';
+  }
+}
+
+function renderOrdenes(ordenes){
+  const lista = document.getElementById('lista-ordenes');
+  const tabla = document.getElementById('tabla-ordenes');
+  lista.innerHTML = '';
+  tabla.innerHTML = '';
+  if(!ordenes.length){
+    lista.textContent = 'Sin órdenes aún.';
+    tabla.innerHTML = '<tr><td class="p-4 text-center text-gray-500" colspan="5">Sin registros</td></tr>';
+    return;
+  }
+  // Próxima (por fecha_entrega o ingreso)
+  const ordenProx = [...ordenes].sort((a,b)=> new Date(a.fecha_entrega || a.fecha_ingreso) - new Date(b.fecha_entrega || b.fecha_ingreso))[0];
+  const proxBox = document.getElementById('proxima-orden');
+  proxBox.innerHTML = `
+    <p class="text-white font-semibold">${ordenProx.descripcion}</p>
+    <p class="text-[11px] text-gray-400">Estado: ${ordenProx.estado}</p>
+    <p class="text-[11px] text-gray-400">Entrega: ${ordenProx.fecha_entrega ? new Date(ordenProx.fecha_entrega).toLocaleString('es-CO') : 'Pendiente'}</p>
+  `;
+
+  ordenes.forEach(o=>{
+    const fechaIn = new Date(o.fecha_ingreso).toLocaleDateString('es-CO');
+    const fechaOut = o.fecha_entrega ? new Date(o.fecha_entrega).toLocaleDateString('es-CO') : 'Pendiente';
+    const pill = estadoPill(o.estado);
+    const div = document.createElement('div');
+    div.className = 'p-3 border border-border-white rounded-lg bg-black/30';
+    div.innerHTML = `<div class="flex justify-between"><span class="text-white font-semibold">${o.descripcion}</span>${pill}</div><p class="text-[11px] text-gray-500">Ingreso: ${fechaIn} • Entrega: ${fechaOut}</p>`;
+    lista.appendChild(div);
+
+    const tr = document.createElement('tr');
+    tr.className = 'border-b border-border-white hover:bg-white/5 transition-colors';
+    tr.innerHTML = `
+      <td class="p-4 font-mono">${fechaIn}</td>
+      <td class="p-4 text-white font-semibold italic">${o.descripcion}</td>
+      <td class="p-4">${pill}</td>
+      <td class="p-4">${fechaOut}</td>
+      <td class="p-4 text-white">$${o.total}</td>
+    `;
+    tabla.appendChild(tr);
+  });
+}
+
+function estadoPill(estado){
+  const colores = {
+    recibido: 'bg-blue-500/10 text-blue-400 border-blue-500/30',
+    en_proceso: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/30',
+    listo: 'bg-green-500/10 text-green-400 border-green-500/30',
+    entregado: 'bg-gray-500/10 text-gray-300 border-gray-500/30'
+  };
+  const cls = colores[estado] || 'bg-white/10 text-white border-white/20';
+  return `<span class="px-2 py-0.5 rounded-full border ${cls} text-[9px] font-bold uppercase">${estado}</span>`;
+}
+
+cargarDashboard();
+cargarDashboard();
+
+document.getElementById('btn-logout').addEventListener('click', async ()=>{
+  try{
+    await fetch(api.logout, {method:'POST', headers});
+  }catch(e){}
+  limpiarSesion();
+  window.location.href = '/portal/';
+});
+
+function limpiarSesion(){
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+  localStorage.removeItem('email');
+  localStorage.removeItem('user_id');
+  localStorage.removeItem('is_admin');
+}
+</script>
+</body>
+</html>
