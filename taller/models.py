@@ -1,6 +1,15 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Cliente(models.Model):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name='cliente_perfil',
+        null=True,
+        blank=True,
+        help_text='Vincula el usuario autenticado con su ficha de cliente'
+    )
     nombre = models.CharField(max_length=100)
     telefono = models.CharField(max_length=20)
     email = models.EmailField(unique=True)

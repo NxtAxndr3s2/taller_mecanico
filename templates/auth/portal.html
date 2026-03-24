@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevTech — Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Archivo:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#050505',
+                        'card-bg': '#0f0f0f',
+                        'accent-blue': '#3b82f6',
+                        'border-white': 'rgba(255,255,255,0.08)'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'display': ['Archivo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel { background: rgba(10, 10, 10, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); }
+        .image-overlay { transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1); }
+        .form-transition { transition: all 0.7s cubic-bezier(0.65, 0, 0.35, 1); }
+        input:focus { box-shadow: 0 0 15px rgba(59,130,246,0.2); background: rgba(255,255,255,0.08) !important; }
+        .btn-glow:hover { box-shadow: 0 0 25px rgba(59,130,246,0.4); transform: translateY(-1px); }
+    </style>
+</head>
+<body class="bg-dark-bg text-gray-200 font-sans min-h-screen flex items-center justify-center p-4 overflow-hidden" id="top">
+
+    <div class="fixed inset-0 z-0">
+        <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-accent-blue/5 rounded-full blur-[150px]"></div>
+        <div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-900/5 rounded-full blur-[150px]"></div>
+    </div>
+
+    <div class="absolute top-6 left-6 z-20">
+        <a href="/" class="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-2">
+            <i class="bi bi-arrow-left"></i> Volver al inicio
+        </a>
+    </div>
+
+    <div class="relative z-10 w-full max-w-5xl h-[700px] flex overflow-hidden rounded-sm border border-border-white bg-black shadow-2xl">
+        
+        <div id="image-panel" class="hidden md:block w-1/2 relative overflow-hidden form-transition z-20 border-r border-border-white">
+            <div id="img-login" class="absolute inset-0 image-overlay opacity-100">
+                <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover scale-110" alt="Interior de Lujo">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+            </div>
+            <div id="img-register" class="absolute inset-0 image-overlay opacity-0">
+                <img src="https://images.unsplash.com/photo-1555664424-778a1e5e1b48?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover scale-110" alt="Tecnología Digital">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+            </div>
+
+            <div class="relative h-full flex flex-col justify-between p-14 text-white">
+                <div class="flex items-center gap-3">
+                    <svg width="45" height="30" viewBox="0 0 150 100" fill="none" class="text-accent-blue">
+                        <path d="M10 20H50C65 20 75 30 75 45C75 60 65 70 50 70H30V90H10V20Z" fill="currentColor"/>
+                        <path d="M30 40H50C55 40 58 42 58 45C58 48 55 50 50 50H30V40Z" fill="white"/>
+                    </svg>
+                    <span class="font-display text-2xl font-black italic tracking-tighter">REVTECH</span>
+                </div>
+                <div>
+                    <h3 id="panel-title" class="font-display text-4xl font-black uppercase italic leading-[1.1] mb-6">Toma el asiento <br><span class="text-accent-blue">del conductor</span></h3>
+                    <p id="panel-desc" class="text-gray-400 text-sm italic leading-relaxed max-w-xs">Tu historial, tus métricas y el estado de tu vehículo en un solo ecosistema digital.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="form-panel" class="w-full md:w-1/2 relative bg-card-bg flex items-center justify-center p-10 lg:p-20 form-transition z-10">
+            
+            <div id="login-form" class="w-full transition-all duration-500 opacity-100">
+                <div class="mb-12">
+                    <h2 class="font-display text-5xl text-white font-black uppercase italic tracking-tighter mb-3">Login</h2>
+                    <div class="w-12 h-1 bg-accent-blue mb-3"></div>
+                    <p class="text-gray-500 text-[10px] uppercase tracking-[0.4em] font-black italic">Verificación de Acceso</p>
+                </div>
+
+                <form class="space-y-6" id="form-login">
+                    <div class="group">
+                        <label class="block text-[10px] uppercase tracking-widest text-gray-500 font-black mb-2 italic">Usuario</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600"><i class="bi bi-person"></i></span>
+                            <input name="username" required type="text" placeholder="usuario" class="w-full bg-white/5 border border-border-white pl-12 pr-5 py-4 text-xs text-white focus:outline-none focus:border-accent-blue transition-all rounded-sm placeholder:text-gray-700">
+                        </div>
+                    </div>
+                    <div class="group">
+                        <label class="block text-[10px] uppercase tracking-widest text-gray-500 font-black mb-2 italic">Contraseña</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-600"><i class="bi bi-lock"></i></span>
+                            <input name="password" required type="password" placeholder="••••••••" class="w-full bg-white/5 border border-border-white pl-12 pr-5 py-4 text-xs text-white focus:outline-none focus:border-accent-blue transition-all rounded-sm placeholder:text-gray-700">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-accent-blue text-white py-5 font-black uppercase italic tracking-[0.2em] hover:bg-blue-600 transition-all rounded-sm btn-glow text-sm">
+                        Ingresar al Sistema
+                    </button>
+                    <p id="login-msg" class="text-xs text-center text-gray-400"></p>
+                </form>
+
+                <div class="mt-14 pt-8 border-t border-border-white/5 text-center">
+                    <p class="text-gray-600 text-[10px] uppercase font-bold tracking-widest mb-5 italic">¿Sin credenciales activas?</p>
+                    <button onclick="toggleView()" class="text-white text-xs font-black uppercase tracking-widest hover:text-accent-blue transition-all italic flex items-center justify-center gap-3 mx-auto group">
+                        Solicitar Registro <i class="bi bi-chevron-right group-hover:translate-x-1 transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="register-form" class="w-full transition-all duration-500 opacity-0 hidden">
+                <div class="mb-10" id="registro">
+                    <h2 class="font-display text-5xl text-white font-black uppercase italic tracking-tighter mb-3">Registro</h2>
+                    <div class="w-12 h-1 bg-white mb-3"></div>
+                    <p class="text-gray-500 text-[10px] uppercase tracking-[0.4em] font-black italic">Nueva Identidad Digital</p>
+                </div>
+
+                <form class="space-y-4" id="form-register">
+                    <input name="username" required type="text" placeholder="USUARIO" class="w-full bg-white/5 border border-border-white px-5 py-3.5 text-[11px] text-white focus:outline-none focus:border-white transition-all rounded-sm placeholder:text-gray-700">
+                    <input name="email" required type="email" placeholder="CORREO ELECTRÓNICO" class="w-full bg-white/5 border border-border-white px-5 py-3.5 text-[11px] text-white focus:outline-none focus:border-white transition-all rounded-sm placeholder:text-gray-700">
+                    <input name="password" required type="password" placeholder="CONTRASEÑA SEGURA" class="w-full bg-white/5 border border-border-white px-5 py-3.5 text-[11px] text-white focus:outline-none focus:border-white transition-all rounded-sm placeholder:text-gray-700">
+                    
+                    <button type="submit" class="w-full bg-white text-black py-5 font-black uppercase italic tracking-[0.2em] hover:bg-accent-blue hover:text-white transition-all rounded-sm mt-4 text-sm">
+                        Confirmar Alta
+                    </button>
+                    <p id="register-msg" class="text-xs text-center text-gray-400"></p>
+                </form>
+
+                <div class="mt-10 text-center">
+                    <button onclick="toggleView()" class="text-gray-500 text-[10px] font-black uppercase tracking-widest hover:text-white transition-all italic flex items-center justify-center gap-3 mx-auto group">
+                        <i class="bi bi-chevron-left group-hover:-translate-x-1 transition-transform"></i> Volver a Autenticación
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let isLogin = true;
+
+        function toggleView() {
+            const imagePanel = document.getElementById('image-panel');
+            const formPanel = document.getElementById('form-panel');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+            const imgLogin = document.getElementById('img-login');
+            const imgRegister = document.getElementById('img-register');
+            const title = document.getElementById('panel-title');
+            const desc = document.getElementById('panel-desc');
+
+            if (isLogin) {
+                imagePanel.style.transform = 'translateX(100%)';
+                formPanel.style.transform = 'translateX(-100%)';
+                imgLogin.style.opacity = '0';
+                imgRegister.style.opacity = '1';
+                title.innerHTML = 'Ingeniería <br><span class="text-white">en tus manos</span>';
+                desc.innerText = 'Crea tu perfil técnico hoy mismo para acceder a diagnósticos preventivos y agendamiento prioritario.';
+                loginForm.classList.add('opacity-0');
+                setTimeout(() => {
+                    loginForm.classList.add('hidden');
+                    registerForm.classList.remove('hidden');
+                    setTimeout(() => registerForm.classList.add('opacity-100'), 50);
+                }, 350);
+            } else {
+                imagePanel.style.transform = 'translateX(0)';
+                formPanel.style.transform = 'translateX(0)';
+                imgLogin.style.opacity = '1';
+                imgRegister.style.opacity = '0';
+                title.innerHTML = 'Toma el asiento <br><span class="text-accent-blue">del conductor</span>';
+                desc.innerText = 'Tu historial, tus métricas y el estado de tu vehículo en un solo ecosistema digital.';
+                registerForm.classList.remove('opacity-100');
+                setTimeout(() => {
+                    registerForm.classList.add('hidden');
+                    loginForm.classList.remove('hidden');
+                    setTimeout(() => loginForm.classList.remove('opacity-0'), 50);
+                }, 350);
+            }
+            isLogin = !isLogin;
+        }
+
+        // Helpers
+        const api = {
+            login: '/auth/login/',
+            register: '/auth/registro/',
+            logout: '/auth/logout/'
+        };
+
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const payload = Object.fromEntries(fd.entries());
+            const msg = document.getElementById('login-msg');
+            msg.textContent = 'Autenticando...';
+            try {
+                const res = await fetch(api.login, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error de login');
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('username', data.username);
+                msg.textContent = 'Acceso concedido. Redirigiendo...';
+                msg.classList.remove('text-gray-400'); msg.classList.add('text-green-400');
+                setTimeout(() => window.location.href = '/', 800);
+            } catch (err) {
+                msg.textContent = err.message;
+                msg.classList.remove('text-gray-400'); msg.classList.add('text-red-400');
+            }
+        });
+
+        document.getElementById('form-register').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fd = new FormData(e.target);
+            const payload = Object.fromEntries(fd.entries());
+            const msg = document.getElementById('register-msg');
+            msg.textContent = 'Creando usuario...';
+            try {
+                const res = await fetch(api.register, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error al registrar');
+                msg.textContent = 'Usuario creado. Inicia sesión para continuar.';
+                msg.classList.remove('text-gray-400'); msg.classList.add('text-green-400');
+                setTimeout(() => {
+                    if (!isLogin) toggleView();
+                }, 600);
+            } catch (err) {
+                msg.textContent = err.message;
+                msg.classList.remove('text-gray-400'); msg.classList.add('text-red-400');
+            }
+        });
+
+        // Si viene con hash #registro, abrir registro
+        if (window.location.hash === '#registro') {
+            toggleView();
+        }
+    </script>
+</body>
+</html>

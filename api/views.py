@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -12,6 +13,38 @@ class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
     permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['post'], permission_classes=[IsAdminUser])
+    def convertir_usuario(self, request):
+        """
+        Solo admin. Crea o vincula un Cliente a partir de un usuario existente.
+        Body: { "user_id": 1, "nombre": "...", "telefono": "...", "direccion": "", "email": "opcional" }
+        """
+        user_id = request.data.get('user_id')
+        if not user_id:
+            return Response({'error': 'user_id es obligatorio'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+
+        cliente, created = Cliente.objects.get_or_create(
+            user=user,
+            defaults={
+                'nombre': request.data.get('nombre', user.username),
+                'telefono': request.data.get('telefono', ''),
+                'email': request.data.get('email', user.email or f'{user.username}@example.com'),
+                'direccion': request.data.get('direccion', '')
+            }
+        )
+        if not created:
+            for field in ['nombre', 'telefono', 'direccion', 'email']:
+                if field in request.data:
+                    setattr(cliente, field, request.data[field])
+            cliente.save()
+
+        serializer = self.get_serializer(cliente)
+        return Response({'detail': 'Cliente creado/vinculado', 'cliente': serializer.data}, status=status.HTTP_200_OK)
 
 
 class VehiculoViewSet(viewsets.ModelViewSet):

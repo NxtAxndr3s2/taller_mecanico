@@ -1,11 +1,17 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import Cliente, Vehiculo, OrdenTrabajo
 
 
 class ClienteSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(),
+        required=False,
+        allow_null=True
+    )
 
     def validate_email(self, value):
-        if not '@' in value:
+        if '@' not in value:
             raise serializers.ValidationError('El email no es válido.')
         return value
 

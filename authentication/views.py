@@ -4,6 +4,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from taller.models import Cliente
 
 
 @api_view(['POST'])
@@ -32,6 +33,18 @@ def registro(request):
 
     user = User.objects.create_user(username=username, password=password, email=email)
     token, _ = Token.objects.get_or_create(user=user)
+
+    # Crear ficha de cliente automáticamente para el usuario registrado
+    cliente_email = email or f"{username}@example.com"
+    Cliente.objects.get_or_create(
+        user=user,
+        defaults={
+            'nombre': username,
+            'telefono': '',
+            'email': cliente_email,
+            'direccion': ''
+        }
+    )
 
     return Response(
         {'token': token.key, 'username': user.username, 'email': user.email},

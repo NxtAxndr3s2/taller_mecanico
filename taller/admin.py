@@ -4,8 +4,8 @@ from .models import Cliente, Vehiculo, OrdenTrabajo
 
 @admin.register(Cliente)
 class ClienteAdmin(admin.ModelAdmin):
-    list_display = ['nombre', 'email', 'telefono']
-    search_fields = ['nombre', 'email']
+    list_display = ['nombre', 'email', 'telefono', 'user']
+    search_fields = ['nombre', 'email', 'user__username']
 
 
 @admin.register(Vehiculo)
