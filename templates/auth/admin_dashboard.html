@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevTech — Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Archivo:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'dark-bg': '#050505',
+                        'panel-bg': '#0f0f0f',
+                        'accent-blue': '#3b82f6',
+                        'accent-green': '#10b981',
+                        'accent-orange': '#f59e0b',
+                        'border-white': 'rgba(255,255,255,0.06)'
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'display': ['Archivo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel { background: rgba(15,15,15,0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .stat-card { background: linear-gradient(145deg, rgba(15,15,15,0.9), rgba(5,5,5,0.9)); border: 1px solid rgba(255,255,255,0.03); transition: all 0.3s ease; }
+        .stat-card:hover { border-color: rgba(59,130,246,0.3); transform: translateY(-2px); }
+        .active-link { background: rgba(59,130,246,0.1); color: white; border-left: 3px solid #3b82f6; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-dark-bg text-gray-300 font-sans antialiased flex h-screen overflow-hidden" id="app">
+
+    <aside class="w-64 border-r border-border-white flex flex-col bg-black shrink-0">
+        <div class="p-8">
+            <div class="font-display text-xl font-black text-white italic tracking-tighter uppercase">
+                REV<span class="text-accent-blue">TECH</span> <span class="text-[10px] bg-white text-black px-1.5 ml-1 not-italic tracking-normal">ADMIN</span>
+            </div>
+        </div>
+        <nav class="flex-1 px-4 space-y-1">
+            <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] mb-4 px-4">Menu Principal</p>
+            <a class="flex items-center gap-3 px-4 py-3 active-link rounded-r-lg text-sm font-semibold uppercase italic tracking-wider">
+                <i class="bi bi-grid-1x2-fill"></i> Panel General
+            </a>
+            <a href="#ordenes" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-r-lg text-gray-500 hover:text-white text-sm font-semibold uppercase italic tracking-wider">
+                <i class="bi bi-tools"></i> Órdenes
+            </a>
+            <a href="#clientes" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-r-lg text-gray-500 hover:text-white text-sm font-semibold uppercase italic tracking-wider">
+                <i class="bi bi-people"></i> Clientes
+            </a>
+            <a href="#vehiculos" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-r-lg text-gray-500 hover:text-white text-sm font-semibold uppercase italic tracking-wider">
+                <i class="bi bi-car-front"></i> Vehículos
+            </a>
+            <p class="text-[10px] font-black text-gray-600 uppercase tracking-[0.2em] mt-8 mb-4 px-4">Sesión</p>
+            <button id="btn-logout-admin" class="flex items-center gap-3 px-4 py-3 hover:bg-white/5 rounded-r-lg text-gray-500 hover:text-white text-sm font-semibold uppercase italic tracking-wider">
+                <i class="bi bi-box-arrow-right"></i> Cerrar sesión
+            </button>
+        </nav>
+        <div class="p-6 border-t border-border-white">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded bg-accent-blue/20 flex items-center justify-center text-accent-blue border border-accent-blue/30">
+                    <i class="bi bi-person-workspace text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-xs font-bold text-white uppercase italic" id="admin-name">Admin</p>
+                    <p class="text-[9px] text-green-500 uppercase font-black">Online</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto bg-dark-bg">
+        <header class="h-20 border-b border-border-white flex items-center justify-between px-8 bg-black/50 sticky top-0 z-30 backdrop-blur-md">
+            <div class="flex items-center gap-4 bg-white/5 border border-white/5 px-4 py-2 rounded-lg w-96">
+                <i class="bi bi-search text-gray-500 text-sm"></i>
+                <input type="text" placeholder="Buscar cliente, placa o servicio..." class="bg-transparent border-none text-xs focus:outline-none text-white w-full uppercase font-medium tracking-tight">
+            </div>
+            <div class="flex items-center gap-6">
+                <button id="btn-nuevo" class="bg-accent-blue text-white px-5 py-2.5 rounded-sm text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all italic">Nuevo Ingreso +</button>
+            </div>
+        </header>
+
+        <div class="p-8 space-y-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="stats">
+                <div class="stat-card p-6 rounded-xl">
+                    <p class="text-xs font-black text-gray-500 uppercase tracking-widest italic">Clientes</p>
+                    <h4 id="stat-clientes" class="text-2xl font-display text-white font-black italic mt-1">0</h4>
+                </div>
+                <div class="stat-card p-6 rounded-xl">
+                    <p class="text-xs font-black text-gray-500 uppercase tracking-widest italic">Vehículos</p>
+                    <h4 id="stat-vehiculos" class="text-2xl font-display text-white font-black italic mt-1">0</h4>
+                </div>
+                <div class="stat-card p-6 rounded-xl">
+                    <p class="text-xs font-black text-gray-500 uppercase tracking-widest italic">Órdenes activas</p>
+                    <h4 id="stat-ordenes" class="text-2xl font-display text-white font-black italic mt-1">0</h4>
+                </div>
+                <div class="stat-card p-6 rounded-xl">
+                    <p class="text-xs font-black text-gray-500 uppercase tracking-widest italic">En proceso</p>
+                    <h4 id="stat-proceso" class="text-2xl font-display text-white font-black italic mt-1">0</h4>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-8" id="ordenes">
+                <div class="col-span-12 lg:col-span-8 glass-panel rounded-xl overflow-hidden">
+                    <div class="p-6 border-b border-border-white flex justify-between items-center">
+                        <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] italic">Órdenes</h3>
+                        <span class="text-[10px] text-gray-500 uppercase tracking-widest">Estado y avance</span>
+                    </div>
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-black/50 text-[10px] uppercase font-bold text-gray-500 tracking-widest border-b border-border-white">
+                            <tr>
+                                <th class="p-4 italic">Cliente</th>
+                                <th class="p-4 italic">Vehículo</th>
+                                <th class="p-4 italic">Descripción</th>
+                                <th class="p-4 italic">Estado</th>
+                                <th class="p-4 italic text-center">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabla-ordenes-admin" class="text-xs"></tbody>
+                    </table>
+                </div>
+
+                <div class="col-span-12 lg:col-span-4 space-y-6">
+                    <div class="glass-panel rounded-xl p-6" id="clientes">
+                        <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] mb-4 italic"><i class="bi bi-people text-accent-blue mr-2"></i>Clientes</h3>
+                        <div id="lista-clientes" class="space-y-2 text-sm"></div>
+                    </div>
+                    <div class="glass-panel rounded-xl p-6" id="vehiculos">
+                        <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] mb-4 italic"><i class="bi bi-car-front text-accent-blue mr-2"></i>Crear Vehículo</h3>
+                        <form id="form-vehiculo" class="space-y-3" enctype="multipart/form-data">
+                            <select name="cliente" id="select-cliente" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" required></select>
+                            <input name="placa" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" placeholder="Placa" required>
+                            <input name="marca" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" placeholder="Marca" required>
+                            <input name="modelo" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" placeholder="Modelo" required>
+                            <input name="año" type="number" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" placeholder="Año">
+                            <input name="color" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" placeholder="Color">
+                            <input name="foto" type="file" accept="image/*" class="w-full text-[11px] text-gray-400">
+                            <button class="w-full bg-accent-blue text-white py-2 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-blue-600 transition" type="submit">Guardar</button>
+                            <p id="vehiculo-msg" class="text-[11px] text-gray-400"></p>
+                        </form>
+                    </div>
+                    <div class="glass-panel rounded-xl p-6">
+                        <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] mb-4 italic"><i class="bi bi-plus-circle text-accent-blue mr-2"></i>Crear Orden</h3>
+                        <form id="form-orden-admin" class="space-y-3">
+                            <select name="vehiculo" id="select-vehiculo-admin" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" required></select>
+                            <textarea name="descripcion" required minlength="10" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" placeholder="Descripción"></textarea>
+                            <input name="total" type="number" step="0.01" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" placeholder="Total">
+                            <button class="w-full bg-white text-black py-2 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-accent-blue hover:text-white transition" type="submit">Crear</button>
+                            <p id="orden-admin-msg" class="text-[11px] text-gray-400"></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<script>
+const token = localStorage.getItem('token');
+const isAdmin = localStorage.getItem('is_admin') === '1';
+const username = localStorage.getItem('username');
+if(!token){ window.location.href = '/portal/'; }
+if(!isAdmin){ window.location.href = '/dashboard/'; }
+
+document.getElementById('admin-name').textContent = username || 'Admin';
+
+const headers = { 'Authorization': 'Token ' + token };
+
+async function fetchJSON(url){
+  const res = await fetch(url,{headers});
+  if(res.status === 401 || res.status === 403){ limpiarSesion(); window.location.href='/portal/'; return null; }
+  if(!res.ok){ throw new Error(await res.text() || 'Error'); }
+  return res.json();
+}
+
+async function cargarDatos(){
+  try{
+    const [clientes, vehiculos, ordenes] = await Promise.all([
+      fetchJSON('/api/clientes/'),
+      fetchJSON('/api/vehiculos/'),
+      fetchJSON('/api/ordenes/')
+    ]);
+    if(!clientes || !vehiculos || !ordenes) return;
+    renderStats(clientes, vehiculos, ordenes);
+    renderClientes(clientes);
+    renderVehiculoSelects(clientes, vehiculos);
+    renderOrdenes(ordenes, vehiculos, clientes);
+  }catch(err){ console.error(err); }
+}
+
+function renderStats(clientes, vehiculos, ordenes){
+  document.getElementById('stat-clientes').textContent = clientes.length;
+  document.getElementById('stat-vehiculos').textContent = vehiculos.length;
+  document.getElementById('stat-ordenes').textContent = ordenes.length;
+  document.getElementById('stat-proceso').textContent = ordenes.filter(o=>o.estado==='en_proceso').length;
+}
+
+function renderClientes(clientes){
+  const div = document.getElementById('lista-clientes');
+  div.innerHTML = '';
+  clientes.slice(0,6).forEach(c=>{
+    const item = document.createElement('div');
+    item.className = 'flex items-center justify-between bg-black/30 border border-border-white rounded px-3 py-2';
+    item.innerHTML = `<div><p class="text-white font-semibold">${c.nombre}</p><p class="text-[10px] text-gray-500">${c.email}</p></div>`;
+    div.appendChild(item);
+  });
+}
+
+function renderVehiculoSelects(clientes, vehiculos){
+  const selCliente = document.getElementById('select-cliente');
+  const selVehiculo = document.getElementById('select-vehiculo-admin');
+  selCliente.innerHTML = '';
+  clientes.forEach(c=>{
+    const opt = document.createElement('option');
+    opt.value = c.id;
+    opt.textContent = `${c.nombre} (${c.email})`;
+    selCliente.appendChild(opt);
+  });
+  selVehiculo.innerHTML = '';
+  vehiculos.forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v.id;
+    opt.textContent = `${v.placa || 'SIN PLACA'} - ${[v.marca,v.modelo].filter(Boolean).join(' ')}`;
+    selVehiculo.appendChild(opt);
+  });
+}
+
+function renderOrdenes(ordenes, vehiculos, clientes){
+  const tbody = document.getElementById('tabla-ordenes-admin');
+  tbody.innerHTML = '';
+  ordenes.forEach(o=>{
+    const veh = vehiculos.find(v=>v.id===o.vehiculo) || {};
+    const cli = clientes.find(c=>c.id===veh.cliente) || {};
+    const tr = document.createElement('tr');
+    tr.className = 'border-b border-border-white hover:bg-white/5 transition-colors';
+    tr.innerHTML = `
+      <td class="p-4 text-white font-semibold">${cli.nombre || '-'}</td>
+      <td class="p-4">${veh.placa || '-'}<div class="text-[10px] text-gray-500">${[veh.marca,veh.modelo].filter(Boolean).join(' ')}</div></td>
+      <td class="p-4 text-gray-300">${o.descripcion}</td>
+      <td class="p-4">${pill(o.estado)}</td>
+      <td class="p-4 text-center"><button class="text-[10px] font-bold text-accent-blue hover:underline" data-id="${o.id}">Avanzar</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+  tbody.querySelectorAll('button[data-id]').forEach(btn=>{
+    btn.addEventListener('click', ()=> avanzarEstado(btn.dataset.id));
+  });
+}
+
+function pill(est){
+  const colors = {recibido:'bg-blue-500/10 text-blue-400 border-blue-500/30', en_proceso:'bg-yellow-500/10 text-yellow-400 border-yellow-500/30', listo:'bg-green-500/10 text-green-400 border-green-500/30', entregado:'bg-gray-500/10 text-gray-300 border-gray-500/30'};
+  const cls = colors[est] || 'bg-white/10 text-white border-white/20';
+  return `<span class="px-2 py-0.5 rounded-full border ${cls} text-[9px] font-bold uppercase">${est}</span>`;
+}
+
+async function avanzarEstado(id){
+  try{
+    const res = await fetch(`/api/ordenes/${id}/avanzar_estado/`, {method:'POST', headers});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || data.detail || 'Error');
+    cargarDatos();
+  }catch(err){ console.error(err); alert(err.message); }
+}
+
+document.getElementById('form-vehiculo').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const form = e.target;
+  const msg = document.getElementById('vehiculo-msg');
+  msg.textContent = 'Guardando...';
+  const fd = new FormData(form);
+  try{
+    const res = await fetch('/api/vehiculos/', { method:'POST', headers: {'Authorization': headers.Authorization}, body: fd });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'No se pudo crear el vehículo');
+    msg.textContent = 'Vehículo creado';
+    msg.classList.remove('text-gray-400'); msg.classList.add('text-green-400');
+    form.reset();
+    cargarDatos();
+  }catch(err){
+    msg.textContent = err.message;
+    msg.classList.remove('text-gray-400'); msg.classList.add('text-red-400');
+  }
+});
+
+document.getElementById('form-orden-admin').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const form = e.target;
+  const msg = document.getElementById('orden-admin-msg');
+  msg.textContent = 'Guardando...';
+  const payload = {
+    vehiculo: form.vehiculo.value,
+    descripcion: form.descripcion.value,
+    total: form.total.value || 0,
+    estado: 'recibido'
+  };
+  try{
+    const res = await fetch('/api/ordenes/', {method:'POST', headers: {...headers, 'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'No se pudo crear la orden');
+    msg.textContent = 'Orden creada';
+    msg.classList.remove('text-gray-400'); msg.classList.add('text-green-400');
+    form.reset();
+    cargarDatos();
+  }catch(err){
+    msg.textContent = err.message;
+    msg.classList.remove('text-gray-400'); msg.classList.add('text-red-400');
+  }
+});
+
+document.getElementById('btn-logout-admin').addEventListener('click', async ()=>{
+  try{ await fetch('/auth/logout/', {method:'POST', headers}); }catch(e){}
+  limpiarSesion();
+  window.location.href='/portal/';
+});
+
+function limpiarSesion(){
+  localStorage.removeItem('token');
+  localStorage.removeItem('username');
+  localStorage.removeItem('email');
+  localStorage.removeItem('user_id');
+  localStorage.removeItem('is_admin');
+}
+
+cargarDatos();
+</script>
+</body>
+</html>

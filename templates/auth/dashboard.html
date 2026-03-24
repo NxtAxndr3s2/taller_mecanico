@@ -43,9 +43,12 @@
         <a class="flex items-center gap-3 px-4 py-3 bg-accent-blue/10 text-white rounded-lg border border-accent-blue/20">
             <i class="bi bi-speedometer2 text-accent-blue"></i> <span class="text-sm font-semibold uppercase italic tracking-wider">Dashboard</span>
         </a>
-        <span class="flex items-center gap-3 px-4 py-3 text-gray-500 text-sm uppercase tracking-wider italic"><i class="bi bi-car-front"></i>Mis Vehículos</span>
-        <span class="flex items-center gap-3 px-4 py-3 text-gray-500 text-sm uppercase tracking-wider italic"><i class="bi bi-calendar-check"></i>Citas</span>
-        <span class="flex items-center gap-3 px-4 py-3 text-gray-500 text-sm uppercase tracking-wider italic"><i class="bi bi-file-earmark-text"></i>Facturas</span>
+        <a href="#vehiculos" class="flex items-center gap-3 px-4 py-3 text-gray-500 text-sm uppercase tracking-wider italic hover:text-white hover:bg-white/5 rounded-lg">
+            <i class="bi bi-car-front"></i>Mis Vehículos
+        </a>
+        <a href="#facturas" class="flex items-center gap-3 px-4 py-3 text-gray-500 text-sm uppercase tracking-wider italic hover:text-white hover:bg-white/5 rounded-lg">
+            <i class="bi bi-receipt"></i>Facturas
+        </a>
     </nav>
     <div class="p-6 border-t border-border-white">
         <div class="flex items-center gap-3">
@@ -72,15 +75,20 @@
     <div class="grid grid-cols-12 gap-6">
         <div class="col-span-12 lg:col-span-8 glass-panel rounded-xl p-8 relative overflow-hidden">
             <div class="relative z-10">
-                <div class="flex justify-between items-start">
+                <div class="flex justify-between items-start gap-4">
                     <div>
                         <span class="status-badge px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest mb-4 inline-block italic" id="vehiculo-estado">Sin datos</span>
                         <h2 class="text-3xl font-display text-white font-black italic uppercase" id="vehiculo-titulo">Espera a que el administrador ponga el nombre y la imagen de tu vehículo</h2>
                         <p class="text-gray-500 text-xs uppercase tracking-widest" id="vehiculo-placa"></p>
                     </div>
-                    <div class="text-right" id="progreso-box" hidden>
-                        <p class="text-4xl font-display text-white font-black italic uppercase tracking-tighter" id="progreso-text">--</p>
-                        <p class="text-[9px] text-accent-blue font-bold uppercase tracking-widest">Progreso estimado</p>
+                    <div class="text-right space-y-2">
+                        <div id="selector-vehiculos-wrapper" class="hidden">
+                            <select id="vehiculo-chooser" class="bg-black/50 border border-border-white text-white text-xs px-2 py-1 rounded"></select>
+                        </div>
+                        <div class="text-right" id="progreso-box" hidden>
+                            <p class="text-4xl font-display text-white font-black italic uppercase tracking-tighter" id="progreso-text">--</p>
+                            <p class="text-[9px] text-accent-blue font-bold uppercase tracking-widest">Progreso estimado</p>
+                        </div>
                     </div>
                 </div>
                 <div class="mt-8 flex justify-center">
@@ -98,9 +106,28 @@
                 <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] mb-4 italic"><i class="bi bi-list-check text-accent-blue mr-2"></i>Mis órdenes</h3>
                 <div id="lista-ordenes" class="space-y-3 text-sm text-gray-300"></div>
             </div>
+            <div class="glass-panel rounded-xl p-6" id="crear-orden">
+                <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] mb-4 italic"><i class="bi bi-plus-circle text-accent-blue mr-2"></i>Crear orden</h3>
+                <form id="form-orden" class="space-y-3">
+                    <div>
+                        <label class="text-[10px] uppercase tracking-widest text-gray-500 font-black">Vehículo</label>
+                        <select name="vehiculo" id="select-vehiculo" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded"></select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase tracking-widest text-gray-500 font-black">Descripción</label>
+                        <textarea name="descripcion" required minlength="10" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" placeholder="Describe el trabajo a realizar"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-[10px] uppercase tracking-widest text-gray-500 font-black">Total estimado</label>
+                        <input name="total" type="number" step="0.01" class="w-full bg-black/40 border border-border-white text-white text-sm px-3 py-2 rounded" placeholder="0.00">
+                    </div>
+                    <button type="submit" class="w-full bg-accent-blue text-white py-2 rounded text-[11px] font-bold uppercase tracking-widest hover:bg-blue-600 transition">Enviar</button>
+                    <p id="orden-msg" class="text-[11px] text-gray-400"></p>
+                </form>
+            </div>
         </div>
 
-        <div class="col-span-12 glass-panel rounded-xl overflow-hidden">
+        <div class="col-span-12 glass-panel rounded-xl overflow-hidden" id="vehiculos">
             <div class="p-6 border-b border-border-white flex justify-between items-center">
                 <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] italic">Historial de servicios</h3>
             </div>
@@ -117,6 +144,14 @@
                 <tbody id="tabla-ordenes" class="text-xs"></tbody>
             </table>
         </div>
+
+        <div class="col-span-12 glass-panel rounded-xl overflow-hidden" id="facturas">
+            <div class="p-6 border-b border-border-white flex justify-between items-center">
+                <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] italic">Facturas</h3>
+                <span class="text-[10px] text-gray-500 uppercase tracking-widest">Próximamente</span>
+            </div>
+            <div class="p-6 text-gray-400 text-sm">Aún no tienes facturas generadas.</div>
+        </div>
     </div>
 </main>
 
@@ -126,7 +161,7 @@ const username = localStorage.getItem('username');
 const userId = localStorage.getItem('user_id');
 const isAdmin = localStorage.getItem('is_admin') === '1';
 if(!token){ window.location.href = '/portal/'; }
-if(isAdmin){ window.location.href = '/admin/'; }
+if(isAdmin){ window.location.href = '/admin-dashboard/'; }
 
 const headers = { 'Authorization': 'Token ' + token, 'Content-Type': 'application/json' };
 const fechaHoy = new Date().toLocaleDateString('es-CO', { day:'2-digit', month:'long', year:'numeric' });
@@ -135,6 +170,9 @@ document.getElementById('headline-name').textContent = username || 'Cliente';
 document.getElementById('user-name').textContent = username || 'Cliente';
 document.getElementById('user-email').textContent = localStorage.getItem('email') || '';
 document.getElementById('avatar').textContent = (username||'--').slice(0,2).toUpperCase();
+
+let misVehiculos = [];
+let selectedVehiculoId = null;
 
 async function fetchJSON(url){
   const res = await fetch(url,{headers});
@@ -145,8 +183,7 @@ async function fetchJSON(url){
   }
   if(!res.ok){
     const text = await res.text();
-    const err = text || `HTTP ${res.status}`;
-    throw new Error(err);
+    throw new Error(text || `HTTP ${res.status}`);
   }
   return res.json();
 }
@@ -160,28 +197,51 @@ async function cargarDashboard(){
 
     const vehiculos = await fetchJSON('/api/vehiculos/');
     if(!vehiculos) return;
-    const misVehiculos = vehiculos.filter(v => String(v.cliente) === String(miCliente.id));
-    const vehiculo = misVehiculos[0];
-    if(vehiculo){
-      const nombre = [vehiculo.marca, vehiculo.modelo].filter(Boolean).join(' ');
-      const tieneNombre = Boolean(nombre.trim());
-      document.getElementById('vehiculo-titulo').textContent = tieneNombre ? nombre : 'Espera a que el administrador ponga el nombre y la imagen de tu vehículo';
-      document.getElementById('vehiculo-placa').textContent = vehiculo.placa ? `Placa: ${vehiculo.placa}` : '';
-      document.getElementById('vehiculo-img').src = vehiculo.foto || 'https://placehold.co/600x300?text=Sin+imagen';
-      document.getElementById('vehiculo-estado').textContent = 'Asignado';
+    misVehiculos = vehiculos.filter(v => String(v.cliente) === String(miCliente.id));
+    if(misVehiculos.length){
+      selectedVehiculoId = misVehiculos[0].id;
+      renderVehiculoHero();
     } else {
+      selectedVehiculoId = null;
       document.getElementById('vehiculo-titulo').textContent = 'Espera a que el administrador cree tu vehículo';
       document.getElementById('vehiculo-estado').textContent = 'Pendiente';
+      document.getElementById('selector-vehiculos-wrapper').classList.add('hidden');
     }
 
     const ordenes = await fetchJSON('/api/ordenes/');
     if(!ordenes) return;
     const misOrdenes = ordenes.filter(o => misVehiculos.some(v => v.id === o.vehiculo));
     renderOrdenes(misOrdenes);
+    renderVehiculosSelect(misVehiculos);
   }catch(err){
     console.error('Dashboard error:', err);
     document.getElementById('vehiculo-titulo').textContent = 'No se pudo cargar el panel. Verifica tu sesión o recarga.';
   }
+}
+
+function renderVehiculoHero(){
+  const wrapper = document.getElementById('selector-vehiculos-wrapper');
+  const chooser = document.getElementById('vehiculo-chooser');
+  if(!misVehiculos.length){ wrapper.classList.add('hidden'); return; }
+  wrapper.classList.toggle('hidden', misVehiculos.length <= 1);
+  chooser.innerHTML = '';
+  misVehiculos.forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v.id;
+    opt.textContent = `${v.placa || 'SIN PLACA'} - ${[v.marca, v.modelo].filter(Boolean).join(' ')}`;
+    if(v.id === selectedVehiculoId) opt.selected = true;
+    chooser.appendChild(opt);
+  });
+  const vehiculo = misVehiculos.find(v => v.id === selectedVehiculoId) || misVehiculos[0];
+  if(!vehiculo) return;
+  selectedVehiculoId = vehiculo.id;
+  const nombre = [vehiculo.marca, vehiculo.modelo].filter(Boolean).join(' ');
+  const tieneNombre = Boolean(nombre.trim());
+  document.getElementById('vehiculo-titulo').textContent = tieneNombre ? nombre : 'Espera a que el administrador ponga el nombre y la imagen de tu vehículo';
+  document.getElementById('vehiculo-placa').textContent = vehiculo.placa ? `Placa: ${vehiculo.placa}` : '';
+  document.getElementById('vehiculo-img').src = vehiculo.foto || 'https://placehold.co/600x300?text=Sin+imagen';
+  document.getElementById('vehiculo-estado').textContent = 'Asignado';
+  chooser.value = selectedVehiculoId;
 }
 
 function renderOrdenes(ordenes){
@@ -194,7 +254,6 @@ function renderOrdenes(ordenes){
     tabla.innerHTML = '<tr><td class="p-4 text-center text-gray-500" colspan="5">Sin registros</td></tr>';
     return;
   }
-  // Próxima (por fecha_entrega o ingreso)
   const ordenProx = [...ordenes].sort((a,b)=> new Date(a.fecha_entrega || a.fecha_ingreso) - new Date(b.fecha_entrega || b.fecha_ingreso))[0];
   const proxBox = document.getElementById('proxima-orden');
   proxBox.innerHTML = `
@@ -236,13 +295,56 @@ function estadoPill(estado){
   return `<span class="px-2 py-0.5 rounded-full border ${cls} text-[9px] font-bold uppercase">${estado}</span>`;
 }
 
-cargarDashboard();
-cargarDashboard();
+function renderVehiculosSelect(vehiculos){
+  const select = document.getElementById('select-vehiculo');
+  select.innerHTML = '';
+  if(!vehiculos.length){
+    select.innerHTML = '<option value="">Sin vehículos</option>';
+    select.disabled = true;
+    document.getElementById('selector-vehiculos-wrapper').classList.add('hidden');
+    return;
+  }
+  select.disabled = false;
+  vehiculos.forEach(v=>{
+    const opt = document.createElement('option');
+    opt.value = v.id;
+    opt.textContent = `${v.placa || 'SIN PLACA'} - ${[v.marca, v.modelo].filter(Boolean).join(' ')}`;
+    select.appendChild(opt);
+  });
+}
+
+document.getElementById('form-orden').addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const form = e.target;
+  const payload = {
+    vehiculo: form.vehiculo.value,
+    descripcion: form.descripcion.value,
+    total: form.total.value || 0,
+    estado: 'recibido'
+  };
+  const msg = document.getElementById('orden-msg');
+  msg.textContent = 'Enviando...';
+  try{
+    const res = await fetch('/api/ordenes/', { method:'POST', headers, body: JSON.stringify(payload) });
+    const data = await res.json();
+    if(!res.ok) throw new Error(data.error || 'No se pudo crear la orden');
+    msg.textContent = 'Orden creada. Actualiza para verla en la lista.';
+    msg.classList.remove('text-gray-400'); msg.classList.add('text-green-400');
+    form.reset();
+    cargarDashboard();
+  }catch(err){
+    msg.textContent = err.message;
+    msg.classList.remove('text-gray-400'); msg.classList.add('text-red-400');
+  }
+});
+
+document.getElementById('vehiculo-chooser').addEventListener('change', (e)=>{
+  selectedVehiculoId = Number(e.target.value);
+  renderVehiculoHero();
+});
 
 document.getElementById('btn-logout').addEventListener('click', async ()=>{
-  try{
-    await fetch(api.logout, {method:'POST', headers});
-  }catch(e){}
+  try{ await fetch('/auth/logout/', {method:'POST', headers}); }catch(e){}
   limpiarSesion();
   window.location.href = '/portal/';
 });
@@ -254,6 +356,8 @@ function limpiarSesion(){
   localStorage.removeItem('user_id');
   localStorage.removeItem('is_admin');
 }
+
+cargarDashboard();
 </script>
 </body>
 </html>

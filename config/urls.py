@@ -38,6 +38,7 @@ urlpatterns = [
     path('auth/login/', login, name='login'),
     path('auth/logout/', logout, name='logout'),
     path('portal/', TemplateView.as_view(template_name='auth/portal.html'), name='portal'),
+    path('admin-dashboard/', TemplateView.as_view(template_name='auth/admin_dashboard.html'), name='admin-dashboard'),
     path('dashboard/', TemplateView.as_view(template_name='auth/dashboard.html'), name='dashboard'),
     path('clientes/', TemplateView.as_view(template_name='clientes.html'), name='clientes'),
     path('vehiculos/', TemplateView.as_view(template_name='vehiculos.html'), name='vehiculos'),
