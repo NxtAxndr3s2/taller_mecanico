@@ -14,6 +14,7 @@ def registro(request):
     Registro de nuevo usuario.
     POST /auth/registro/
     Body: { "username": "...", "password": "...", "email": "..." }
+    El usuario queda inactivo hasta que un admin lo autorice (is_active=False).
     """
     username = request.data.get('username')
     password = request.data.get('password')
@@ -31,8 +32,12 @@ def registro(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    user = User.objects.create_user(username=username, password=password, email=email)
-    token, _ = Token.objects.get_or_create(user=user)
+    user = User.objects.create_user(
+        username=username,
+        password=password,
+        email=email,
+        is_active=False  # requerir autorización
+    )
 
     # Crear ficha de cliente automáticamente para el usuario registrado
     cliente_email = email or f"{username}@example.com"
@@ -48,7 +53,7 @@ def registro(request):
 
     return Response(
         {
-            'token': token.key,
+            'detail': 'Usuario creado. Necesitas estar autorizado para entrar.',
             'user_id': user.id,
             'username': user.username,
             'email': user.email,
@@ -83,6 +88,12 @@ def login(request):
         return Response(
             {'error': 'Credenciales incorrectas.'},
             status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    if not user.is_active:
+        return Response(
+            {'error': 'Necesitas estar autorizado para entrar.'},
+            status=status.HTTP_403_FORBIDDEN
         )
 
     token, _ = Token.objects.get_or_create(user=user)

@@ -203,7 +203,12 @@ const api = {
                     body: JSON.stringify(payload)
                 });
         const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Error de login');
+        if (!res.ok) {
+            const texto = (res.status === 401 || res.status === 403)
+                ? 'Necesitas estar autorizado para entrar.'
+                : (data.error || 'Error de login');
+            throw new Error(texto);
+        }
         localStorage.setItem('token', data.token);
         localStorage.setItem('username', data.username);
         localStorage.setItem('email', data.email || '');
