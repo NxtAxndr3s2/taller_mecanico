@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Cliente, Vehiculo, OrdenTrabajo
+from .models import Cliente, Vehiculo, OrdenTrabajo, Factura
 
 
 @admin.register(Cliente)
@@ -19,3 +19,9 @@ class OrdenTrabajoAdmin(admin.ModelAdmin):
     list_display = ['id', 'vehiculo', 'estado', 'fecha_ingreso']
     list_filter = ['estado']
     search_fields = ['vehiculo__placa']
+
+
+@admin.register(Factura)
+class FacturaAdmin(admin.ModelAdmin):
+    list_display = ['id', 'orden', 'total', 'fecha']
+    search_fields = ['orden__vehiculo__placa']

@@ -72,16 +72,16 @@
         </div>
     </header>
 
-    <div class="grid grid-cols-12 gap-6">
-        <div class="col-span-12 lg:col-span-8 glass-panel rounded-xl p-8 relative overflow-hidden">
-            <div class="relative z-10">
-                <div class="flex justify-between items-start gap-4">
+    <div class="grid grid-cols-12 gap-3 items-start">
+        <div class="col-span-12 lg:col-span-8 glass-panel rounded-xl p-4 relative overflow-hidden">
+            <div class="relative z-10 space-y-3">
+                <div class="flex justify-between items-start gap-3">
                     <div>
-                        <span class="status-badge px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest mb-4 inline-block italic" id="vehiculo-estado">Sin datos</span>
-                        <h2 class="text-3xl font-display text-white font-black italic uppercase" id="vehiculo-titulo">Espera a que el administrador ponga el nombre y la imagen de tu vehículo</h2>
-                        <p class="text-gray-500 text-xs uppercase tracking-widest" id="vehiculo-placa"></p>
+                        <span class="status-badge px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-widest inline-block italic" id="vehiculo-estado">Sin datos</span>
+                        <h2 class="text-2xl font-display text-white font-black italic uppercase mt-2" id="vehiculo-titulo">Espera a que el administrador ponga el nombre y la imagen de tu vehículo</h2>
+                        <p class="text-gray-500 text-xs uppercase tracking-widest mt-1" id="vehiculo-placa"></p>
                     </div>
-                    <div class="text-right space-y-2">
+                    <div class="text-right space-y-2 shrink-0">
                         <div id="selector-vehiculos-wrapper" class="hidden">
                             <select id="vehiculo-chooser" class="bg-black/50 border border-border-white text-white text-xs px-2 py-1 rounded"></select>
                         </div>
@@ -91,8 +91,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="mt-8 flex justify-center">
-                    <img id="vehiculo-img" src="https://placehold.co/600x300?text=Sin+imagen" class="w-full max-w-lg object-contain mix-blend-lighten opacity-80" alt="Vehículo">
+                <div class="flex justify-center">
+                    <img id="vehiculo-img" src="https://placehold.co/600x300?text=Sin+imagen" class="w-full max-w-xl max-h-80 object-contain mix-blend-lighten opacity-80" alt="Vehículo">
                 </div>
             </div>
         </div>
@@ -148,9 +148,20 @@
         <div class="col-span-12 glass-panel rounded-xl overflow-hidden" id="facturas">
             <div class="p-6 border-b border-border-white flex justify-between items-center">
                 <h3 class="text-xs font-black text-white uppercase tracking-[0.2em] italic">Facturas</h3>
-                <span class="text-[10px] text-gray-500 uppercase tracking-widest">Próximamente</span>
             </div>
-            <div class="p-6 text-gray-400 text-sm">Aún no tienes facturas generadas.</div>
+            <div class="p-6 text-gray-400 text-sm" id="facturas-vacio">Aún no tienes facturas generadas.</div>
+            <div class="overflow-x-auto hidden" id="facturas-wrapper">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-black/50 text-[10px] uppercase font-bold text-gray-500 tracking-widest">
+                        <tr>
+                            <th class="p-4 italic">Orden</th>
+                            <th class="p-4 italic">Fecha</th>
+                            <th class="p-4 italic">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-facturas" class="text-xs"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </main>
@@ -212,6 +223,7 @@ async function cargarDashboard(){
     if(!ordenes) return;
     const misOrdenes = ordenes.filter(o => misVehiculos.some(v => v.id === o.vehiculo));
     renderOrdenes(misOrdenes);
+    renderFacturas(misOrdenes);
     renderVehiculosSelect(misVehiculos);
   }catch(err){
     console.error('Dashboard error:', err);
@@ -310,6 +322,39 @@ function renderVehiculosSelect(vehiculos){
     opt.value = v.id;
     opt.textContent = `${v.placa || 'SIN PLACA'} - ${[v.marca, v.modelo].filter(Boolean).join(' ')}`;
     select.appendChild(opt);
+  });
+}
+
+function renderFacturas(ordenes){
+  const facturas = ordenes
+    .filter(o => o.factura)
+    .map(o => ({ordenId: o.id, factura: o.factura, descripcion: o.descripcion}));
+
+  const vacio = document.getElementById('facturas-vacio');
+  const wrapper = document.getElementById('facturas-wrapper');
+  const tbody = document.getElementById('tabla-facturas');
+
+  if(!facturas.length){
+    vacio.classList.remove('hidden');
+    wrapper.classList.add('hidden');
+    tbody.innerHTML = '';
+    return;
+  }
+
+  vacio.classList.add('hidden');
+  wrapper.classList.remove('hidden');
+  tbody.innerHTML = '';
+
+  facturas.forEach(({ordenId, factura, descripcion})=>{
+    const fecha = new Date(factura.fecha).toLocaleDateString('es-CO');
+    const tr = document.createElement('tr');
+    tr.className = 'border-b border-border-white hover:bg-white/5 transition-colors';
+    tr.innerHTML = `
+      <td class="p-4 text-white font-semibold italic">#${ordenId} · ${descripcion}</td>
+      <td class="p-4">${fecha}</td>
+      <td class="p-4 text-white">$${factura.total}</td>
+    `;
+    tbody.appendChild(tr);
   });
 }
 

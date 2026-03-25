@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Cliente, Vehiculo, OrdenTrabajo
+from .models import Cliente, Vehiculo, OrdenTrabajo, Factura
 
 
 class ClienteSerializer(serializers.ModelSerializer):
@@ -33,6 +33,7 @@ class VehiculoSerializer(serializers.ModelSerializer):
 
 
 class OrdenTrabajoSerializer(serializers.ModelSerializer):
+    factura = serializers.SerializerMethodField(read_only=True)
 
     def validate_descripcion(self, value):
         if len(value) < 10:
@@ -41,4 +42,26 @@ class OrdenTrabajoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrdenTrabajo
+        fields = [
+            'id',
+            'vehiculo',
+            'descripcion',
+            'estado',
+            'fecha_ingreso',
+            'fecha_entrega',
+            'total',
+            'observaciones',
+            'factura',
+        ]
+
+    def get_factura(self, obj):
+        factura = getattr(obj, 'factura', None)
+        if not factura:
+            return None
+        return FacturaSerializer(factura).data
+
+
+class FacturaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Factura
         fields = '__all__'

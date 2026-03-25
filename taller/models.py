@@ -55,3 +55,16 @@ class OrdenTrabajo(models.Model):
 
     def __str__(self):
         return f"Orden #{self.id} - {self.vehiculo.placa} - {self.get_estado_display()}"
+
+
+class Factura(models.Model):
+    orden = models.OneToOneField(
+        OrdenTrabajo,
+        on_delete=models.CASCADE,
+        related_name='factura'
+    )
+    fecha = models.DateTimeField(auto_now_add=True)
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"Factura #{self.id} - Orden #{self.orden_id}"

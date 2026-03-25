@@ -1,10 +1,11 @@
 from django.contrib.auth.models import User
+from django.utils import timezone
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 
-from taller.models import Cliente, Vehiculo, OrdenTrabajo
+from taller.models import Cliente, Vehiculo, OrdenTrabajo, Factura
 from taller.serializers import ClienteSerializer, VehiculoSerializer, OrdenTrabajoSerializer
 
 
@@ -94,7 +95,15 @@ class OrdenTrabajoViewSet(viewsets.ModelViewSet):
 
         nuevo_estado = FLUJO_ESTADOS[indice_actual + 1]
         orden.estado = nuevo_estado
+        if nuevo_estado == 'entregado':
+            orden.fecha_entrega = orden.fecha_entrega or timezone.now()
         orden.save()
+
+        if nuevo_estado == 'entregado':
+            Factura.objects.get_or_create(
+                orden=orden,
+                defaults={'total': orden.total}
+            )
 
         serializer = self.get_serializer(orden)
         return Response({
