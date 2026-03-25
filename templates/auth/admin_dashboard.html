@@ -224,9 +224,12 @@ function renderVehiculoSelects(clientes, vehiculos){
   });
   selVehiculo.innerHTML = '';
   vehiculos.forEach(v=>{
+    const cli = clientes.find(c=>c.id===v.cliente) || {};
     const opt = document.createElement('option');
     opt.value = v.id;
-    opt.textContent = `${v.placa || 'SIN PLACA'} - ${[v.marca,v.modelo].filter(Boolean).join(' ')}`;
+    const vehLabel = `${v.placa || 'SIN PLACA'} - ${[v.marca,v.modelo].filter(Boolean).join(' ')}`;
+    const clienteLabel = cli.nombre ? `${cli.nombre} (${cli.email||''})` : 'Cliente sin nombre';
+    opt.textContent = `${clienteLabel} · ${vehLabel}`;
     selVehiculo.appendChild(opt);
   });
 }
